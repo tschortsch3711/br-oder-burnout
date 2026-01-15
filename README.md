@@ -11,6 +11,15 @@ Der **BR-Wahl-O-Mat** ist ein interaktiver Selbstcheck, der Mitarbeitenden hilft
 npx serve
 ```
 
+## GitHub Pages
+
+Du kannst das Projekt direkt über GitHub Pages hosten:
+
+1. Repository auf GitHub öffnen.
+2. **Settings → Pages** auswählen.
+3. Als Source den Branch (z. B. `main` oder `work`) und `/ (root)` festlegen.
+4. Speichern und die bereitgestellte URL aufrufen.
+
 ## Fragen erweitern
 
 Die Fragen liegen in `assets/questions.js` und folgen diesem Format:

@@ -20,16 +20,19 @@ const CATEGORY_LABELS = {
   Rückhalt: "Team/Rückhalt & Vernetzung",
 };
 
+// Zentrale App-Statestruktur: aktueller Index + Antworten.
 const state = {
   index: 0,
   answers: {},
 };
 
+// Speichert Antworten und Index in localStorage.
 function saveState() {
   localStorage.setItem(STORAGE_ANSWERS, JSON.stringify(state.answers));
   localStorage.setItem(STORAGE_INDEX, String(state.index));
 }
 
+// Lädt gespeicherten Zustand (falls vorhanden).
 function loadState() {
   const storedAnswers = localStorage.getItem(STORAGE_ANSWERS);
   const storedIndex = localStorage.getItem(STORAGE_INDEX);
@@ -44,6 +47,7 @@ function loadState() {
   }
 }
 
+// Setzt den Zustand zurück und entfernt gespeicherte Daten.
 function clearState() {
   localStorage.removeItem(STORAGE_ANSWERS);
   localStorage.removeItem(STORAGE_INDEX);
@@ -89,6 +93,7 @@ function renderStart() {
   }
 }
 
+// Rendert die aktuelle Frage inkl. Fortschritt und Likert-Skala.
 function renderQuestion() {
   const question = QUESTIONS[state.index];
   const total = QUESTIONS.length;
@@ -163,6 +168,7 @@ function renderQuestion() {
   });
 }
 
+// Berechnet Gesamt- und Kategorie-Scores (jeweils 0–100).
 function calculateScores() {
   const categoryStats = {};
   let points = 0;
@@ -195,6 +201,7 @@ function calculateScores() {
   return { total: normalized, categories: categoryScores };
 }
 
+// Liefert das Label für die Ergebnis-Kategorie.
 function scoreLabel(score) {
   if (score <= 35) return "Eher nicht";
   if (score <= 55) return "Unentschlossen";
@@ -202,6 +209,7 @@ function scoreLabel(score) {
   return "Sehr passend";
 }
 
+// Erstellt personalisierte Hinweise basierend auf den Scores.
 function buildHints(totalScore, categoryScores) {
   const hints = [];
 
@@ -248,6 +256,7 @@ function buildHints(totalScore, categoryScores) {
   return hints.slice(0, 5);
 }
 
+// Erzeugt den kopierbaren Ergebnistext.
 function buildResultText(totalScore, label, categoryScores, hints) {
   const categoryLines = Object.entries(categoryScores)
     .map(([key, value]) => `${CATEGORY_LABELS[key]}: ${value}/100`)
@@ -258,6 +267,7 @@ function buildResultText(totalScore, label, categoryScores, hints) {
   )}`;
 }
 
+// Rendert die Ergebnisansicht inkl. Accordion und Aktionen.
 function renderResult() {
   const { total, categories } = calculateScores();
   const label = scoreLabel(total);
