@@ -1,2 +1,41 @@
-# br-oder-burnout
-"br-oder-burnout" ist ein interaktives Selbstcheck-Tool, das dir anhand einfacher Fragen hilft herauszufinden, ob es für dich sinnvoll sein könnte, bei der Betriebsratswahl zu kandidieren.
+# BR-Wahl-O-Mat
+
+Der **BR-Wahl-O-Mat** ist ein interaktiver Selbstcheck, der Mitarbeitenden hilft einzuschätzen, ob eine Kandidatur bei der Betriebsratswahl gut zu ihnen passt.
+
+## Nutzung
+
+- Öffne die `index.html` direkt im Browser.
+- Alternativ kannst du einen einfachen Static Server verwenden, z. B.:
+
+```bash
+npx serve
+```
+
+## GitHub Pages
+
+Du kannst das Projekt direkt über GitHub Pages hosten:
+
+1. Repository auf GitHub öffnen.
+2. **Settings → Pages** auswählen.
+3. Als Source den Branch (z. B. `main` oder `work`) und `/ (root)` festlegen.
+4. Speichern und die bereitgestellte URL aufrufen.
+
+## Fragen erweitern
+
+Die Fragen liegen in `assets/questions.js` und folgen diesem Format:
+
+```js
+{
+  id: "eindeutige_id",
+  text: "Fragetext",
+  category: "Motivation",
+  weight: 1.0,
+  reverseScoring: false
+}
+```
+
+Kategorien: `Motivation`, `Zeit`, `Kommunikation`, `Konflikt`, `Rückhalt`.
+
+## Datenschutz
+
+Alles läuft lokal im Browser. Es werden keine Daten an Server übertragen.
