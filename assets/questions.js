@@ -29,7 +29,7 @@ export const QUESTIONS = [
   },
   {
     id: "rueckhalt_kollegen",
-    text: "Ich habe Rückhalt bei Kolleginnen/Kollegen oder traue mir zu, ihn aufzubauen.",
+    text: "Ich sehe mich in der Lage, das Vertrauen von Kolleginnen und Kollegen aufzubauen und ihre Interessen glaubwürdig zu vertreten.",
     category: "Rückhalt",
     weight: 1.2,
     reverseScoring: false,
