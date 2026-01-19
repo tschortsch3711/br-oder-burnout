@@ -2,14 +2,14 @@ import { QUESTIONS } from "./questions.js";
 
 const STORAGE_ANSWERS = "brwom_answers";
 const STORAGE_INDEX = "brwom_index";
+const STORAGE_SCALE_VERSION = "brwom_scale_version";
+const SCALE_VERSION = "3-point";
 const app = document.querySelector("#app");
 
 const LIKERT_OPTIONS = [
-  { value: 1, label: "Trifft gar nicht zu" },
-  { value: 2, label: "Trifft eher nicht zu" },
-  { value: 3, label: "Teils/Teils" },
-  { value: 4, label: "Trifft eher zu" },
-  { value: 5, label: "Trifft voll zu" },
+  { value: 1, label: "Nein" },
+  { value: 2, label: "Vielleicht" },
+  { value: 3, label: "Ja" },
 ];
 
 const CATEGORY_LABELS = {
@@ -30,10 +30,16 @@ const state = {
 function saveState() {
   localStorage.setItem(STORAGE_ANSWERS, JSON.stringify(state.answers));
   localStorage.setItem(STORAGE_INDEX, String(state.index));
+  localStorage.setItem(STORAGE_SCALE_VERSION, SCALE_VERSION);
 }
 
 // Lädt gespeicherten Zustand (falls vorhanden).
 function loadState() {
+  const storedScaleVersion = localStorage.getItem(STORAGE_SCALE_VERSION);
+  if (storedScaleVersion && storedScaleVersion !== SCALE_VERSION) {
+    clearState();
+    return;
+  }
   const storedAnswers = localStorage.getItem(STORAGE_ANSWERS);
   const storedIndex = localStorage.getItem(STORAGE_INDEX);
   if (storedAnswers) {
@@ -41,6 +47,10 @@ function loadState() {
   }
   if (storedIndex) {
     state.index = Number.parseInt(storedIndex, 10) || 0;
+  }
+  if (Object.values(state.answers).some((value) => value > 3)) {
+    clearState();
+    return;
   }
   if (state.index >= QUESTIONS.length) {
     state.index = QUESTIONS.length - 1;
@@ -51,6 +61,7 @@ function loadState() {
 function clearState() {
   localStorage.removeItem(STORAGE_ANSWERS);
   localStorage.removeItem(STORAGE_INDEX);
+  localStorage.removeItem(STORAGE_SCALE_VERSION);
   state.answers = {};
   state.index = 0;
 }
@@ -180,15 +191,15 @@ function calculateScores() {
       categoryStats[question.category] = { points: 0, min: 0, max: 0 };
     }
     const rawValue = state.answers[question.id] || 1;
-    const adjustedValue = question.reverseScoring ? 6 - rawValue : rawValue;
+    const adjustedValue = question.reverseScoring ? 4 - rawValue : rawValue;
     const weighted = adjustedValue * question.weight;
     points += weighted;
     minPoints += 1 * question.weight;
-    maxPoints += 5 * question.weight;
+    maxPoints += 3 * question.weight;
 
     categoryStats[question.category].points += weighted;
     categoryStats[question.category].min += 1 * question.weight;
-    categoryStats[question.category].max += 5 * question.weight;
+    categoryStats[question.category].max += 3 * question.weight;
   });
 
   const normalized = Math.round(((points - minPoints) / (maxPoints - minPoints)) * 100);
