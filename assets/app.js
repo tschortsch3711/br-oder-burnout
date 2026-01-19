@@ -7,9 +7,9 @@ const SCALE_VERSION = "3-point";
 const app = document.querySelector("#app");
 
 const LIKERT_OPTIONS = [
-  { value: 1, label: "Nein" },
-  { value: 2, label: "Vielleicht" },
   { value: 3, label: "Ja" },
+  { value: 2, label: "Vielleicht" },
+  { value: 1, label: "Nein" },
 ];
 
 const CATEGORY_LABELS = {
