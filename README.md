@@ -4,14 +4,7 @@ Der **BR-Wahl-O-Mat** ist ein interaktiver Selbstcheck, der Mitarbeitenden hilft
 
 ## Nutzung
 
-- Öffne die `index.html` direkt im Browser.
-- Alternativ kannst du einen einfachen Static Server verwenden, z. B.:
-
-```bash
-npx serve
-```
-
-## GitHub Pages
+### 1) GitHub Pages (empfohlen)
 
 Du kannst das Projekt direkt über GitHub Pages hosten:
 
@@ -19,6 +12,16 @@ Du kannst das Projekt direkt über GitHub Pages hosten:
 2. **Settings → Pages** auswählen.
 3. Als Source den Branch (z. B. `main` oder `work`) und `/ (root)` festlegen.
 4. Speichern und die bereitgestellte URL aufrufen.
+
+### 2) Lokaler Webserver
+
+Alternativ kannst du einen einfachen Static Server verwenden, z. B.:
+
+```bash
+npx serve
+```
+
+Oder direkt die `index.html` im Browser öffnen.
 
 ## Fragen erweitern
 
