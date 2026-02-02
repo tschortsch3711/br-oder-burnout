@@ -233,6 +233,10 @@ function scoreLabel(score) {
   return "Sehr viele passende Voraussetzungen erkennbar";
 }
 
+function describeScore(score) {
+  return scoreLabel(score);
+}
+
 // Erstellt personalisierte Hinweise basierend auf den Scores.
 function buildHints(totalScore, categoryScores) {
   const hints = [];
@@ -286,12 +290,12 @@ function buildHints(totalScore, categoryScores) {
 }
 
 // Erzeugt den kopierbaren Ergebnistext.
-function buildResultText(totalScore, label, categoryScores, hints) {
+function buildResultText(label, categoryScores, hints) {
   const categoryLines = Object.entries(categoryScores)
-    .map(([key, value]) => `${CATEGORY_LABELS[key]}: ${value}/100`)
+    .map(([key, value]) => `${CATEGORY_LABELS[key]}: ${describeScore(value)}`)
     .join("\n");
 
-  return `BR-Selbstcheck Ergebnis\nGesamtscore: ${totalScore}/100 (${label})\n\n${categoryLines}\n\nHinweise:\n- ${hints.join(
+  return `BR-Selbstcheck Ergebnis\nGesamteindruck: ${label}\n\n${categoryLines}\n\nHinweise:\n- ${hints.join(
     "\n- "
   )}\n\nHinweis: Dieses Ergebnis ist eine Orientierungshilfe und keine Empfehlung.`;
 }
@@ -305,7 +309,6 @@ function renderResult() {
   app.innerHTML = `
     <h2>Dein Ergebnis</h2>
     <div class="badge">${label}</div>
-    <div class="result-score">${total}/100</div>
     <p class="muted">
       Dieses Ergebnis beantwortet nicht die Frage, ob du Betriebsrat werden solltest oder nicht.
       Es zeigt lediglich, welche Aspekte sich für dich aktuell stabil anfühlen – und wo es sinnvoll sein kann,
@@ -326,8 +329,7 @@ function renderResult() {
           ([key, value]) => `
           <details open>
             <summary>${CATEGORY_LABELS[key]}</summary>
-            <div class="muted">${value}/100</div>
-            <div class="category-bar"><span style="width:${value}%"></span></div>
+            <div class="muted">${describeScore(value)}</div>
           </details>
         `
         )
@@ -349,7 +351,7 @@ function renderResult() {
   const restartButton = app.querySelector("#restart");
 
   copyButton.addEventListener("click", async () => {
-    const text = buildResultText(total, label, categories, hints);
+    const text = buildResultText(label, categories, hints);
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
     } else {
