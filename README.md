@@ -1,6 +1,17 @@
-# BR-Wahl-O-Mat
+# BR-Selbstcheck – Entscheidungshilfe zur Betriebsratskandidatur
 
-Der **BR-Wahl-O-Mat** ist ein interaktiver Selbstcheck, der Mitarbeitenden hilft einzuschätzen, ob eine Kandidatur bei der Betriebsratswahl gut zu ihnen passt.
+Der **BR-Selbstcheck** ist eine persönliche Entscheidungshilfe für Mitarbeitende, die darüber nachdenken, sich zur Betriebsratswahl aufstellen zu lassen.
+
+Der Selbstcheck ist **keine**:
+- Eignungsprüfung
+- Empfehlung („Ja/Nein“)
+- Bewertung der Persönlichkeit
+- Prognose über Erfolg oder Belastbarkeit
+
+Er soll:
+- zur Selbstreflexion anregen
+- typische Belastungs- und Anforderungssituationen aus der BR-Praxis sichtbar machen
+- eine Diskussionsgrundlage für Gespräche mit erfahrenen Betriebsratsmitgliedern liefern
 
 ## Nutzung
 
@@ -37,7 +48,7 @@ Die Fragen liegen in `assets/questions.js` und folgen diesem Format:
 }
 ```
 
-Kategorien: `Motivation`, `Zeit`, `Kommunikation`, `Konflikt`, `Rückhalt`.
+Kategorien: `Motivation`, `Zeit`, `Kommunikation`, `Konflikt`, `Rückhalt`, `Selbstmanagement`.
 
 ## Datenschutz
 

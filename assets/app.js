@@ -3,13 +3,14 @@ import { QUESTIONS } from "./questions.js";
 const STORAGE_ANSWERS = "brwom_answers";
 const STORAGE_INDEX = "brwom_index";
 const STORAGE_SCALE_VERSION = "brwom_scale_version";
-const SCALE_VERSION = "3-point";
+const SCALE_VERSION = "4-point";
 const app = document.querySelector("#app");
 
 const LIKERT_OPTIONS = [
-  { value: 3, label: "Ja" },
-  { value: 2, label: "Vielleicht" },
-  { value: 1, label: "Nein" },
+  { value: 4, label: "Trifft zu" },
+  { value: 3, label: "Trifft eher zu" },
+  { value: 2, label: "Trifft eher nicht zu" },
+  { value: 1, label: "Trifft nicht zu" },
 ];
 
 const CATEGORY_LABELS = {
@@ -18,6 +19,7 @@ const CATEGORY_LABELS = {
   Kommunikation: "Kommunikation & Empathie",
   Konflikt: "Konfliktfähigkeit & Mut",
   Rückhalt: "Team/Rückhalt & Vernetzung",
+  Selbstmanagement: "Selbstmanagement & Abgrenzung",
 };
 
 // Zentrale App-Statestruktur: aktueller Index + Antworten.
@@ -48,7 +50,7 @@ function loadState() {
   if (storedIndex) {
     state.index = Number.parseInt(storedIndex, 10) || 0;
   }
-  if (Object.values(state.answers).some((value) => value > 3)) {
+  if (Object.values(state.answers).some((value) => value > 4)) {
     clearState();
     return;
   }
@@ -69,10 +71,21 @@ function clearState() {
 function renderStart() {
   const hasSaved = Object.keys(state.answers).length > 0;
   app.innerHTML = `
-    <h1>BR-Wahl-O-Mat</h1>
+    <h1>BR-Selbstcheck – Entscheidungshilfe zur Betriebsratskandidatur</h1>
     <p class="muted">Soll ich mich zur Betriebsratswahl aufstellen lassen?</p>
-    <p>Dieser Selbstcheck hilft dir, deine Motivation, Belastbarkeit und Kommunikationsstärke einzuschätzen.</p>
-    <p class="muted">Keine Rechtsberatung. Nur ein Selbstcheck.</p>
+    <p>
+      Dieser Selbstcheck unterstützt dich dabei, deine aktuelle Situation in Bezug auf eine mögliche Kandidatur
+      zu reflektieren. Er ist freiwillig, bildet nur eine Momentaufnahme ab und enthält kein „richtig“ oder „falsch“.
+    </p>
+    <p>
+      Das Ergebnis ist keine Empfehlung und sagt nichts über deinen Wert oder deine Kompetenz aus. Es basiert auf
+      deiner Selbsteinschätzung und kann sich ändern, wenn sich Rahmenbedingungen in deinem Leben oder Job verändern.
+    </p>
+    <p>
+      Ziel ist es, typische Anforderungen aus der Betriebsratsarbeit sichtbar zu machen und dir Anhaltspunkte zu geben,
+      über welche Themen du weiter nachdenken oder sprechen möchtest. Gespräche mit erfahrenen
+      Betriebsratsmitgliedern werden ausdrücklich empfohlen.
+    </p>
     ${
       hasSaved
         ? `
@@ -191,15 +204,15 @@ function calculateScores() {
       categoryStats[question.category] = { points: 0, min: 0, max: 0 };
     }
     const rawValue = state.answers[question.id] || 1;
-    const adjustedValue = question.reverseScoring ? 4 - rawValue : rawValue;
+    const adjustedValue = question.reverseScoring ? 5 - rawValue : rawValue;
     const weighted = adjustedValue * question.weight;
     points += weighted;
     minPoints += 1 * question.weight;
-    maxPoints += 3 * question.weight;
+    maxPoints += 4 * question.weight;
 
     categoryStats[question.category].points += weighted;
     categoryStats[question.category].min += 1 * question.weight;
-    categoryStats[question.category].max += 3 * question.weight;
+    categoryStats[question.category].max += 4 * question.weight;
   });
 
   const normalized = Math.round(((points - minPoints) / (maxPoints - minPoints)) * 100);
@@ -214,10 +227,10 @@ function calculateScores() {
 
 // Liefert das Label für die Ergebnis-Kategorie.
 function scoreLabel(score) {
-  if (score <= 35) return "Eher nicht";
-  if (score <= 55) return "Unentschlossen";
-  if (score <= 75) return "Gute Voraussetzungen";
-  return "Sehr passend";
+  if (score <= 35) return "Erhöhter Klärungsbedarf in mehreren Bereichen";
+  if (score <= 55) return "Gemischtes Bild – einige Aspekte sollten genauer betrachtet werden";
+  if (score <= 75) return "Viele passende Voraussetzungen erkennbar";
+  return "Sehr viele passende Voraussetzungen erkennbar";
 }
 
 // Erstellt personalisierte Hinweise basierend auf den Scores.
@@ -239,6 +252,11 @@ function buildHints(totalScore, categoryScores) {
       "Aktives Zuhören, Moderation und Feedback-Methoden stärken deine Kommunikationswirkung."
     );
   }
+  if (categoryScores.Selbstmanagement < 45) {
+    hints.push(
+      "Achte auf Selbstfürsorge und Abgrenzung. Klare Pausen und Unterstützung aus dem Umfeld können entlasten."
+    );
+  }
   if (categoryScores.Motivation >= 70 && categoryScores.Rückhalt < 50) {
     hints.push(
       "Deine Motivation ist stark. Baue gezielt Rückhalt auf, sprich mit Kolleginnen/Kollegen und suche Verbündete."
@@ -246,12 +264,12 @@ function buildHints(totalScore, categoryScores) {
   }
   if (totalScore >= 76) {
     hints.push(
-      "Sehr gute Basis – informiere dich jetzt über Kandidatur, Listen und Fristen im Unternehmen."
+      "Viele Aspekte wirken stabil. Wenn du möchtest, informiere dich über Rahmenbedingungen, Listen und Fristen im Unternehmen."
     );
   }
   if (totalScore <= 35) {
     hints.push(
-      "Vielleicht ist gerade nicht der richtige Zeitpunkt. Prüfe Alternativen wie unterstützende Rollen im Umfeld des Betriebsrats."
+      "Wenn sich aktuell vieles belastend anfühlt, kann es helfen, unterstützende Rollen oder erste Schritte im Umfeld des Betriebsrats zu prüfen."
     );
   }
 
@@ -273,9 +291,9 @@ function buildResultText(totalScore, label, categoryScores, hints) {
     .map(([key, value]) => `${CATEGORY_LABELS[key]}: ${value}/100`)
     .join("\n");
 
-  return `BR-Wahl-O-Mat Ergebnis\nGesamtscore: ${totalScore}/100 (${label})\n\n${categoryLines}\n\nHinweise:\n- ${hints.join(
+  return `BR-Selbstcheck Ergebnis\nGesamtscore: ${totalScore}/100 (${label})\n\n${categoryLines}\n\nHinweise:\n- ${hints.join(
     "\n- "
-  )}`;
+  )}\n\nHinweis: Dieses Ergebnis ist eine Orientierungshilfe und keine Empfehlung.`;
 }
 
 // Rendert die Ergebnisansicht inkl. Accordion und Aktionen.
@@ -288,7 +306,19 @@ function renderResult() {
     <h2>Dein Ergebnis</h2>
     <div class="badge">${label}</div>
     <div class="result-score">${total}/100</div>
-    <p class="muted">Deine Einstufung basiert auf den Antworten im Fragebogen.</p>
+    <p class="muted">
+      Dieses Ergebnis beantwortet nicht die Frage, ob du Betriebsrat werden solltest oder nicht.
+      Es zeigt lediglich, welche Aspekte sich für dich aktuell stabil anfühlen – und wo es sinnvoll sein kann,
+      genauer hinzuschauen oder Gespräche zu führen.
+    </p>
+    <p class="muted">
+      Ein Gespräch mit einem aktuellen oder ehemaligen Betriebsratsmitglied kann helfen, die Ergebnisse besser
+      einzuordnen. Konkrete Praxisbeispiele aus dem Alltag geben oft ein realistischeres Bild als ein reiner Score.
+    </p>
+    <p class="muted">
+      Transparenzhinweis: Einige Fragen sind bewusst stärker gewichtet, da sie sich in der betrieblichen Praxis
+      als besonders belastungsrelevant für die Betriebsratsarbeit gezeigt haben.
+    </p>
 
     <div class="details-list">
       ${Object.entries(categories)
